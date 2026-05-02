@@ -39,11 +39,6 @@ public:
     void set(size_t index, const T& value);
     void set(size_t index, T&& value);
 
-    void push_back(const T& value);
-    void push_back(T&& value);
-
-    void pop_back();
-
     void resize(size_t new_size);
 
     iterator begin() noexcept;

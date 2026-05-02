@@ -121,6 +121,18 @@ public:
 
     void clear();
 
+    linked_list<T> slice(size_t start, size_t end) const;
+    linked_list<T> operator()(size_t start, size_t end) const;
+
+    linked_list<T> concat(const linked_list<T>& other) const;
+    linked_list<T> concat(linked_list<T>&& other) const;
+
+    linked_list<T> operator+(const linked_list<T>& other) const;
+    linked_list<T> operator+(linked_list<T>&& other) const;
+
+    linked_list<T>& operator+=(const linked_list<T>& other);
+    linked_list<T>& operator+=(linked_list<T>&& other);
+
     iterator begin() noexcept;
     iterator end() noexcept;
 
@@ -419,6 +431,106 @@ void linked_list<T>::extract(size_t index) {
 template<class T>
 void linked_list<T>::clear() {
     for (; head; ) pop_front();
+}
+
+template<class T>
+linked_list<T> linked_list<T>::slice(size_t start, size_t end) const {
+    if (start > end) {
+        throw std::out_of_range("invalid range");
+    }
+
+    linked_list<T> result;
+    const node* cur = head;
+
+    for (size_t i = 0; i < start; ++i) {
+        if (!cur) throw std::out_of_range("out of range");
+        cur = cur->next;
+    }
+    for (size_t i = start; i < end; ++i) {
+        if (!cur) std::out_of_range("out of range");
+        result.push_back(cur->value);
+        cur = cur->next;
+    }
+
+    return result;
+}
+
+template<class T>
+linked_list<T> linked_list<T>::operator()(size_t start, size_t end) const {
+    linked_list<T> result;
+    const node* cur = head;
+
+    for (size_t i = 0; i < start; ++i) {
+        cur = cur->next;
+    }
+    for (size_t i = start; i < end; ++i) {
+        result.push_back(cur->value);
+        cur = cur->next;
+    }
+
+    return result;
+}
+
+template<class T>
+linked_list<T> linked_list<T>::concat(const linked_list<T>& other) const {
+    linked_list<T> result;
+
+    for (auto el : *this) {
+        result.push_back(el);
+    }
+    for (auto el : other) {
+        result.push_back(el);
+    }
+
+    return result;
+}
+
+template<class T>
+linked_list<T> linked_list<T>::concat(linked_list<T>&& other) const {
+    linked_list<T> result = *this;
+    result.concat(std::move(other));
+    return result;
+}
+
+template<class T>
+linked_list<T> linked_list<T>::operator+(const linked_list<T>& other) const {
+    linked_list<T> result = *this;
+    result += other;
+    return result;
+}
+
+template<class T>
+linked_list<T> linked_list<T>::operator+(linked_list<T>&& other) const {
+    linked_list<T> result = *this;
+    result += std::move(other);
+    return result;
+}
+
+template<class T>
+linked_list<T>& linked_list<T>::operator+=(const linked_list<T>& other) {
+    for (auto el : other) {
+        push_back(el);
+    }
+    return *this;
+}
+
+template<class T>
+linked_list<T>& linked_list<T>::operator+=(linked_list<T>&& other) {
+    if (!other.head) return *this;
+
+    if (!head) {
+        head = other.head;
+        tail = other.tail;
+    } else {
+        tail->next = other.head;
+        other.head->prev = tail;
+        tail = other.tail;
+    }
+
+    other.head = nullptr;
+    other.tail = nullptr;
+
+    return *this;
 }
 
 template<class T>
