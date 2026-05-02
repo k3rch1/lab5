@@ -16,7 +16,7 @@ public:
     using const_iterator = const T*;
 
     dynamic_array();
-    explicit dynamic_array(size_t size);
+    explicit dynamic_array(size_t count);
     dynamic_array(const T* items, size_t count);
     dynamic_array(std::initializer_list<T> init);
 
@@ -36,6 +36,14 @@ public:
     T& get(size_t index);
     const T& get(size_t index) const;
 
+    void set(size_t index, const T& value);
+    void set(size_t index, T&& value);
+
+    void push_back(const T& value);
+    void push_back(T&& value);
+
+    void pop_back();
+
     void resize(size_t new_size);
 
     iterator begin() noexcept;
@@ -49,7 +57,7 @@ template <typename T>
 dynamic_array<T>::dynamic_array() : items(nullptr), size_(0) {}
 
 template<class T>
-dynamic_array<T>::dynamic_array(size_t size) : items(new T[size]()), size_(size) {}
+dynamic_array<T>::dynamic_array(size_t count) : items(new T[count]()), size_(count) {}
 
 template<class T>
 dynamic_array<T>::dynamic_array(const T* items, size_t count) : items(new T[count]), size_(count) {
@@ -135,6 +143,18 @@ const T& dynamic_array<T>::get(size_t index) const {
         throw std::out_of_range("out of range");
     }
     return items[index];
+}
+
+template<class T>
+void dynamic_array<T>::set(size_t index, const T& value) {
+    if (index >= size_) throw std::out_of_range("out of range");
+    items[index] = value;
+}
+
+template<class T>
+void dynamic_array<T>::set(size_t index, T&& value) {
+    if (index >= size_) throw std::out_of_range("out of range");
+    items[index] = std::move(value);
 }
 
 template<class T>
