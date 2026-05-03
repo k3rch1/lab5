@@ -1,6 +1,5 @@
 #pragma once
 
-#include <algorithm>
 #include <initializer_list>
 #include <stdexcept>
 #include <utility>
