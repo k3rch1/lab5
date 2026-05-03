@@ -39,6 +39,15 @@ public:
     void set(size_t index, const T& value);
     void set(size_t index, T&& value);
 
+    void push_front(const T& value);
+    void push_front(T&& value);
+
+    void push_back(const T& value);
+    void push_back(T&& value);
+
+    void insert(size_t index, const T& value);
+    void insert(size_t index, T&& value);
+
     void resize(size_t new_size);
 
     iterator begin() noexcept;
@@ -150,6 +159,70 @@ template<class T>
 void dynamic_array<T>::set(size_t index, T&& value) {
     if (index >= size_) throw std::out_of_range("out of range");
     items[index] = std::move(value);
+}
+
+template<class T>
+void dynamic_array<T>::push_front(const T& value) {
+    resize(size_ + 1);
+
+    for (size_t i = size_ - 1; i > 0; --i) {
+        items[i] = std::move(items[i - 1]);
+    }
+
+    items[0] = value;
+}
+
+template<class T>
+void dynamic_array<T>::push_front(T&& value) {
+    resize(size_ + 1);
+
+    for (size_t i = size_ - 1; i > 0; --i) {
+        items[i] = std::move(items[i - 1]);
+    }
+
+    items[0] = std::move(value);
+}
+
+template<class T>
+void dynamic_array<T>::push_back(const T& value) {
+    resize(size_ + 1);
+    items[size_ - 1] = value;
+}
+
+template<class T>
+void dynamic_array<T>::push_back(T&& value) {
+    resize(size_ + 1);
+    items[size_ - 1] = std::move(value);
+}
+
+template<class T>
+void dynamic_array<T>::insert(size_t index, const T& value) {
+    if (index > size_) {
+        throw std::out_of_range("out of range");
+    }
+
+    resize(size_ + 1);
+
+    for (size_t i = size_ - 1; i > index; --i) {
+        items[i] = std::move(items[i - 1]);
+    }
+
+    items[index] = value;
+}
+
+template<class T>
+void dynamic_array<T>::insert(size_t index, T&& value) {
+    if (index > size_) {
+        throw std::out_of_range("out of range");
+    }
+
+    resize(size_ + 1);
+
+    for (size_t i = size_ - 1; i > index; --i) {
+        items[i] = std::move(items[i - 1]);
+    }
+
+    items[index] = srd::move(value);
 }
 
 template<class T>
