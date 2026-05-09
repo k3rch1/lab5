@@ -222,7 +222,7 @@ void dynamic_array<T>::insert(size_t index, T&& value) {
         items[i] = std::move(items[i - 1]);
     }
 
-    items[index] = srd::move(value);
+    items[index] = std::move(value);
 }
 
 template<class T>
