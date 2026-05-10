@@ -2,10 +2,11 @@
 
 #include <initializer_list>
 #include <utility>
+#include "sequence.hpp"
 #include "dynamic_array.hpp"
 
 template<class T>
-class array_sequence {
+class array_sequence : public sequence<T> {
 private:
     dynamic_array<T> items;
 public:
@@ -20,39 +21,39 @@ public:
     array_sequence(const array_sequence& other) = default;
     array_sequence(array_sequence&& other) = default;
 
-    ~array_sequence() = default;
+    ~array_sequence() override = default;
 
     array_sequence& operator=(const array_sequence&) = default;
     array_sequence& operator=(array_sequence&&) = default;
     
-    size_t size() const noexcept;
-    bool empty() const noexcept;
+    size_t size() const noexcept override;
+    bool empty() const noexcept override;
 
-    T& front();
-    const T& front() const;
+    T& front() override;
+    const T& front() const override;
 
-    T& back();
-    const T& back() const;
+    T& back() override;
+    const T& back() const override;
 
-    T& operator[](size_t index);
-    const T& operator[](size_t index) const;
+    T& operator[](size_t index) override;
+    const T& operator[](size_t index) const override;
 
-    T& get(size_t index);
-    const T& get(size_t index) const;
+    T& get(size_t index) override;
+    const T& get(size_t index) const override;
 
-    void set(size_t index, const T& value);
-    void set(size_t index, T&& value);
+    void set(size_t index, const T& value) override;
+    void set(size_t index, T&& value) override;
 
-    void append(const T& value);
-    void append(T&& value);
+    void append(const T& value) override;
+    void append(T&& value) override;
 
-    void prepend(const T& value);
-    void prepend(T&& value);
+    void prepend(const T& value) override;
+    void prepend(T&& value) override;
 
-    void insert(size_t index, const T& value);
-    void insert(size_t index, T&& value);
+    void insert(size_t index, const T& value) override;
+    void insert(size_t index, T&& value) override;
 
-    void clear();
+    void clear() override;
 
     auto begin() const noexcept;
     auto begin() noexcept;

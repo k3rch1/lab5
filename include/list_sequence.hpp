@@ -2,10 +2,11 @@
 
 #include <initializer_list>
 #include <utility>
+#include "sequence.hpp"
 #include "linked_list.hpp"
 
 template<class T>
-class list_sequence {
+class list_sequence : public sequence<T> {
 private:
     linked_list<T> items;
 public:
@@ -20,39 +21,39 @@ public:
     list_sequence(const list_sequence& other) = default;
     list_sequence(list_sequence&& other) = default;
 
-    ~list_sequence() = default;
+    ~list_sequence() override = default;
 
     list_sequence& operator=(const list_sequence&) = default;
     list_sequence& operator=(list_sequence&&) = default;
     
-    size_t size() const noexcept;
-    bool empty() const noexcept;
+    size_t size() const noexcept override;
+    bool empty() const noexcept override;
 
-    T& front();
-    const T& front() const;
+    T& front() override;
+    const T& front() const override;
 
-    T& back();
-    const T& back() const;
+    T& back() override;
+    const T& back() const override;
 
-    T& operator[](size_t index);
-    const T& operator[](size_t index) const;
+    T& operator[](size_t index) override;
+    const T& operator[](size_t index) const override;
 
-    T& get(size_t index);
-    const T& get(size_t index) const;
+    T& get(size_t index) override;
+    const T& get(size_t index) const override;
 
-    void set(size_t index, const T& value);
-    void set(size_t index, T&& value);
+    void set(size_t index, const T& value) override;
+    void set(size_t index, T&& value) override;
 
-    void append(const T& value);
-    void append(T&& value);
+    void append(const T& value) override;
+    void append(T&& value) override;
 
-    void prepend(const T& value);
-    void prepend(T&& value);
+    void prepend(const T& value) override;
+    void prepend(T&& value) override;
 
-    void insert(size_t index, const T& value);
-    void insert(size_t index, T&& value);
+    void insert(size_t index, const T& value) override;
+    void insert(size_t index, T&& value) override;
 
-    void clear();
+    void clear() override;
 
     auto begin() const noexcept;
     auto begin() noexcept;
