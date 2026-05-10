@@ -34,8 +34,14 @@ public:
     T& back();
     const T& back() const;
 
+    T& operator[](size_t index);
+    const T& operator[](size_t index) const;
+
     T& get(size_t index);
     const T& get(size_t index) const;
+
+    void set(size_t index, const T& value);
+    void set(size_t index, T&& value);
 
     void append(const T& value);
     void append(T&& value);
@@ -101,6 +107,16 @@ const T& array_sequence<T>::back() const {
 }
 
 template<class T>
+T& array_sequence<T>::operator[](size_t index) {
+    return items[index];
+}
+
+template<class T>
+const T& array_sequence<T>::operator[](size_t index) const {
+    return items[index];
+}
+
+template<class T>
 T& array_sequence<T>::get(size_t index) {
     return items.get(index);
 }
@@ -108,6 +124,16 @@ T& array_sequence<T>::get(size_t index) {
 template<class T>
 const T& array_sequence<T>::get(size_t index) const {
     return items.get(index);
+}
+
+template<class T>
+void array_sequence<T>::set(size_t index, const T& value) {
+    items.set(index, value);
+}
+
+template<class T>
+void array_sequence<T>::set(size_t index, T&& value) {
+    items.set(index, std::move(value));
 }
 
 template<class T>
