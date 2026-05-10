@@ -44,13 +44,13 @@ TEST(dynamic_array, ilist_ctor) {
 
 TEST(dynamic_array, move_ctor) {
     dynamic_array<int> source = {1, 2, 3};
-
     dynamic_array<int> moved(std::move(source));
+    int expected[] = {1, 2, 3};
 
     EXPECT_EQ(moved.size(), 3);
 
     for (auto i = 0; i < 3; i++)
-        EXPECT_EQ(source[i], moved[i]);
+        EXPECT_EQ(moved[i], expected[i]);
 
     EXPECT_EQ(source.size(), 0);
 }
@@ -72,21 +72,22 @@ TEST(dynamic_array, copy_ctor) {
 
 TEST(dynamic_array, move_operator) {
     dynamic_array<int> source = {1, 2, 3};
-    dynamic_array<int> moved = std::move(source);
-
+    dynamic_array<int> moved;
+    moved = std::move(source);
     int expected[] = {1, 2, 3};
 
     EXPECT_EQ(moved.size(), 3);
 
     for (auto i = 0; i < 3; i++)
-        EXPECT_EQ(moved[i], source[i]);
+        EXPECT_EQ(moved[i], expected[i]);
 
     EXPECT_EQ(source.size(), 0);
 }
 
 TEST(dynamic_array, copy_operator) {
     dynamic_array<int> source = {1, 2, 3};
-    dynamic_array<int> copy = source;
+    dynamic_array<int> copy;
+    copy = source;
 
     EXPECT_EQ(copy.size(), source.size());
 

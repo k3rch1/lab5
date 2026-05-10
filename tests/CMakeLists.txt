@@ -8,6 +8,7 @@ enable_testing()
 add_executable(
     tests
     dynamic_array_tests.cpp
+    linked_list_tests.cpp
 )
 
 target_include_directories(

@@ -30,8 +30,8 @@ public:
 
     size_t size() const noexcept;
 
-    T& operator[](size_t index) noexcept;
-    const T& operator[](size_t index) const noexcept;
+    T& operator[](size_t index);
+    const T& operator[](size_t index) const;
 
     T& get(size_t index);
     const T& get(size_t index) const;
@@ -124,12 +124,18 @@ size_t dynamic_array<T>::size() const noexcept {
 }
 
 template<class T>
-T& dynamic_array<T>::operator[](size_t index) noexcept {
+T& dynamic_array<T>::operator[](size_t index) {
+    if (index >= size_) {
+        throw std::out_of_range("out of range");
+    }
     return items[index];
 }
 
 template<class T>
-const T& dynamic_array<T>::operator[](size_t index) const noexcept {
+const T& dynamic_array<T>::operator[](size_t index) const {
+    if (index >= size_) {
+        throw std::out_of_range("out of range");
+    }
     return items[index];
 }
 

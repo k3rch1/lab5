@@ -101,8 +101,14 @@ public:
     T& back();
     const T& back() const;
 
+    T& operator[](size_t index);
+    const T& operator[](size_t index) const;
+
     T& get(size_t index);
     const T& get(size_t index) const;
+
+    void set(size_t index, const T& value);
+    void set(size_t index, T&& value);
 
     void push_front(const T& value);
     void push_front(T&& value);
@@ -250,6 +256,34 @@ const T& linked_list<T>::back() const {
 }
 
 template<class T>
+T& linked_list<T>::operator[](size_t index) {
+    node* cur = head;
+
+    for (size_t i = 0; i < index; ++i) {
+        if (!cur) throw std::out_of_range("out of range");
+        cur = cur->next;
+    }
+
+    if (!cur) throw std::out_of_range("out of range");
+
+    return cur->value;
+}
+
+template<class T>
+const T& linked_list<T>::operator[](size_t index) const {
+    node* cur = head;
+
+    for (size_t i = 0; i < index; ++i) {
+        if (!cur) throw std::out_of_range("out of range");
+        cur = cur->next;
+    }
+
+    if (!cur) throw std::out_of_range("out of range");
+
+    return cur->value;
+}
+
+template<class T>
 T& linked_list<T>::get(size_t index) {
     node* cur = head;
 
@@ -275,6 +309,16 @@ const T& linked_list<T>::get(size_t index) const {
     if (!cur) throw std::out_of_range("out of range");
 
     return cur->value;
+}
+
+template<class T>
+void linked_list<T>::set(size_t index, const T& value) {
+    (*this)[index] = value;
+}
+
+template<class T>
+void linked_list<T>::set(size_t index, T&& value) {
+    (*this)[index] = std::move(value);
 }
 
 template<class T>
@@ -446,7 +490,7 @@ linked_list<T> linked_list<T>::slice(size_t start, size_t end) const {
         cur = cur->next;
     }
     for (size_t i = start; i < end; ++i) {
-        if (!cur) std::out_of_range("out of range");
+        if (!cur) throw std::out_of_range("out of range");
         result.push_back(cur->value);
         cur = cur->next;
     }
@@ -456,13 +500,19 @@ linked_list<T> linked_list<T>::slice(size_t start, size_t end) const {
 
 template<class T>
 linked_list<T> linked_list<T>::operator()(size_t start, size_t end) const {
+    if (start > end) {
+        throw std::out_of_range("invalid range");
+    }
+
     linked_list<T> result;
     const node* cur = head;
 
     for (size_t i = 0; i < start; ++i) {
+        if (!cur) throw std::out_of_range("out of range");
         cur = cur->next;
     }
     for (size_t i = start; i < end; ++i) {
+        if (!cur) throw std::out_of_range("out of range");
         result.push_back(cur->value);
         cur = cur->next;
     }
@@ -487,7 +537,7 @@ linked_list<T> linked_list<T>::concat(const linked_list<T>& other) const {
 template<class T>
 linked_list<T> linked_list<T>::concat(linked_list<T>&& other) const {
     linked_list<T> result = *this;
-    result.concat(std::move(other));
+    result = result.concat(std::move(other));
     return result;
 }
 
