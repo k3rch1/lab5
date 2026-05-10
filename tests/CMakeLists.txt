@@ -10,6 +10,7 @@ add_executable(
     dynamic_array_tests.cpp
     linked_list_tests.cpp
     array_sequence_tests.cpp
+    list_sequence_tests.cpp
 )
 
 target_include_directories(
