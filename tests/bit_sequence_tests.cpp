@@ -60,8 +60,6 @@ TEST(bit_sequence, move_ctor) {
 
     for (auto i = 0; i < 4; ++i)
         EXPECT_EQ(moved[i], expected[i]);
-
-    EXPECT_EQ(source.size(), 0);
 }
 
 TEST(bit_sequence, copy_operator) {

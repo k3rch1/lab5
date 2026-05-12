@@ -83,7 +83,7 @@ public:
         }
     };
 
-    bit_sequence() = default;
+    bit_sequence();
     explicit bit_sequence(size_t count);
     bit_sequence(const bool* items, size_t count);
     bit_sequence(std::initializer_list<bool> init);
@@ -122,58 +122,138 @@ public:
 };
 
 template<std::integral T>
-bit_sequence<T>::bit_sequence(size_t count) : items(count) {}
+bit_sequence<T>::bit_sequence() : items(), size_(0) {}
 
 template<std::integral T>
-bit_sequence<T>::bit_sequence(const bool* items, size_t count) {}
+bit_sequence<T>::bit_sequence(size_t count) : items((count + sizeof(T) * 8 - 1) / (sizeof(T) * 8)), size_(count) {
+    for (size_t i = 0; i < items.size(); ++i)
+        items[i] = 0u;
+}
 
 template<std::integral T>
-bit_sequence<T>::bit_sequence(std::initializer_list<bool> init) {}
+bit_sequence<T>::bit_sequence(const bool* items, size_t count) : items(), size_(0) {
+    for (size_t i = 0; i < count; ++i)
+        push_back(items[i]);
+}
 
 template<std::integral T>
-size_t bit_sequence<T>::size() const noexcept {}
+bit_sequence<T>::bit_sequence(std::initializer_list<bool> init) : items(), size_(0) {
+    for (bool bit : init)
+        push_back(bit);
+}
 
 template<std::integral T>
-bool bit_sequence<T>::empty() const noexcept {}
+size_t bit_sequence<T>::size() const noexcept {
+    return size_;
+}
 
 template<std::integral T>
-bit_sequence<T>::bit_proxy bit_sequence<T>::operator[](size_t index) {}
+bool bit_sequence<T>::empty() const noexcept {
+    return size() == 0;
+}
 
 template<std::integral T>
-bool bit_sequence<T>::operator[](size_t index) const {}
+bit_sequence<T>::bit_proxy bit_sequence<T>::operator[](size_t index) {
+    if (index >= size_)
+        throw std::out_of_range("out of range");
+
+    return bit_proxy(items[index / (sizeof(T) * 8)], index % (sizeof(T) * 8));
+}
 
 template<std::integral T>
-bool bit_sequence<T>::get(size_t index) const {}
+bool bit_sequence<T>::operator[](size_t index) const {
+    if (index >= size_)
+        throw std::out_of_range("out of range");
+
+    return (items[index / (sizeof(T) * 8)] >> (index % (sizeof(T) * 8))) & 1u;
+}
 
 template<std::integral T>
-void bit_sequence<T>::set(size_t index, bool value) {}
+bool bit_sequence<T>::get(size_t index) const {
+    return (*this)[index];
+}
 
 template<std::integral T>
-void bit_sequence<T>::push_back(bool value) {}
+void bit_sequence<T>::set(size_t index, bool value) {
+    (*this)[index] = value;
+}
 
 template<std::integral T>
-void bit_sequence<T>::clear() {}
+void bit_sequence<T>::push_back(bool value) {
+    if (size_ % (sizeof(T) * 8) == 0)
+        items.push_back(T(0));
+    
+    size_++;
+    set(size_ - 1, value);
+}
 
 template<std::integral T>
-bit_sequence<T> bit_sequence<T>::operator&(const bit_sequence& other) const {}
+void bit_sequence<T>::clear() {
+    items.resize(0);
+    size_ = 0;
+}
 
 template<std::integral T>
-bit_sequence<T> bit_sequence<T>::operator|(const bit_sequence& other) const {}
+bit_sequence<T> bit_sequence<T>::operator&(const bit_sequence& other) const {
+    if (size_ != other.size_)
+        throw std::invalid_argument("size mismatch");
+
+    bit_sequence result(size_);
+    for (size_t i = 0; i < items.size(); ++i)
+        result.items[i] = items[i] & other.items[i];
+
+    return result;
+}
 
 template<std::integral T>
-bit_sequence<T> bit_sequence<T>::operator^(const bit_sequence& other) const {}
+bit_sequence<T> bit_sequence<T>::operator|(const bit_sequence& other) const {
+    if (size_ != other.size_)
+        throw std::invalid_argument("size mismatch");
+
+    bit_sequence result(size_);
+    for (size_t i = 0; i < items.size(); ++i)
+        result.items[i] = items[i] | other.items[i];
+
+    return result;
+}
 
 template<std::integral T>
-bit_sequence<T> bit_sequence<T>::operator~() const {}
+bit_sequence<T> bit_sequence<T>::operator^(const bit_sequence& other) const {
+    if (size_ != other.size_)
+        throw std::invalid_argument("size mismatch");
+
+    bit_sequence result(size_);
+    for (size_t i = 0; i < items.size(); ++i)
+        result.items[i] = items[i] ^ other.items[i];
+
+    return result;
+}
 
 template<std::integral T>
-bit_sequence<T>::iterator bit_sequence<T>::begin() noexcept {}
+bit_sequence<T> bit_sequence<T>::operator~() const {
+    bit_sequence result(size_);
+    for (size_t i = 0; i < items.size(); ++i)
+        result.items[i] = ~items[i];
+
+    return result;
+}
 
 template<std::integral T>
-bit_sequence<T>::iterator bit_sequence<T>::end() noexcept {}
+bit_sequence<T>::iterator bit_sequence<T>::begin() noexcept {
+    return iterator(this, 0);
+}
 
 template<std::integral T>
-bit_sequence<T>::const_iterator bit_sequence<T>::begin() const noexcept {}
+bit_sequence<T>::iterator bit_sequence<T>::end() noexcept {
+    return iterator(this, size_);
+}
 
 template<std::integral T>
-bit_sequence<T>::const_iterator bit_sequence<T>::end() const noexcept {}
+bit_sequence<T>::const_iterator bit_sequence<T>::begin() const noexcept {
+    return const_iterator(this, 0);
+}
+
+template<std::integral T>
+bit_sequence<T>::const_iterator bit_sequence<T>::end() const noexcept {
+    return const_iterator(this, size_);
+}
