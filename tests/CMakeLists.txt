@@ -11,6 +11,7 @@ add_executable(
     linked_list_tests.cpp
     array_sequence_tests.cpp
     list_sequence_tests.cpp
+    #bit_sequence_tests.cpp
 )
 
 target_include_directories(
