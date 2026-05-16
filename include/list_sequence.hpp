@@ -55,6 +55,9 @@ public:
 
     void clear() override;
 
+    list_sequence<T> slice(size_t start, size_t end) const;
+    list_sequence<T> operator()(size_t start, size_t end) const;
+
     auto begin() const noexcept;
     auto begin() noexcept;
 
@@ -170,6 +173,16 @@ void list_sequence<T>::insert(size_t index, T&& value) {
 template<class T>
 void list_sequence<T>::clear() {
     items.clear();
+}
+
+template<class T>
+list_sequence<T> list_sequence<T>::slice(size_t start, size_t end) const {
+    return array_sequence<T>(items.slice(start, end));
+}
+
+template<class T>
+list_sequence<T> list_sequence<T>::operator()(size_t start, size_t end) const {
+    return array_sequence<T>(items(start, end));
 }
 
 template<class T>

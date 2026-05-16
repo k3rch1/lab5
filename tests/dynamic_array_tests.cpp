@@ -194,3 +194,49 @@ TEST(dynamic_array, resize_zero) {
 
     EXPECT_EQ(arr.size(), 0);
 }
+
+TEST(dynamic_array, slice) {
+    dynamic_array<int> array = {1, 2, 3, 4};
+    auto sliced = array.slice(1, 3);
+    int expected[] = {2, 3};
+
+    EXPECT_EQ(sliced.size(), 2);
+
+    for (size_t i = 0; i < 2; ++i)
+        EXPECT_EQ(sliced[i], expected[i]);
+}
+
+TEST(dynamic_array, slice_full) {
+    dynamic_array<int> array = {1, 2, 3};
+    auto sliced = array.slice(0, 3);
+    int expected[] = {1, 2, 3};
+
+    EXPECT_EQ(sliced.size(), 3);
+
+    for (size_t i = 0; i < 3; ++i)
+        EXPECT_EQ(sliced[i], expected[i]);
+}
+
+TEST(dynamic_array, slice_empty) {
+    dynamic_array<int> array = {1, 2, 3};
+    auto sliced = array.slice(1, 1);
+
+    EXPECT_EQ(sliced.size(), 0);
+}
+
+TEST(dynamic_array, slice_out_of_range) {
+    dynamic_array<int> array = {1, 2, 3};
+
+    EXPECT_THROW(array.slice(1, 4), std::out_of_range);
+}
+
+TEST(dynamic_array, operator_slice) {
+    dynamic_array<int> array = {1, 2, 3, 4};
+    auto sliced = array(1, 3);
+    int expected[] = {2, 3};
+
+    EXPECT_EQ(sliced.size(), 2);
+
+    for (size_t i = 0; i < 2; ++i)
+        EXPECT_EQ(sliced[i], expected[i]);
+}

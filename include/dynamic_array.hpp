@@ -50,6 +50,9 @@ public:
 
     void resize(size_t new_size);
 
+    dynamic_array<T> slice(size_t start, size_t end) const;
+    dynamic_array<T> operator()(size_t start, size_t end) const;
+
     iterator begin() noexcept;
     const_iterator begin() const noexcept;
 
@@ -242,6 +245,23 @@ void dynamic_array<T>::resize(size_t new_size) {
 
     items = new_items;
     size_ = new_size;
+}
+
+template<class T>
+dynamic_array<T> dynamic_array<T>::slice(size_t start, size_t end) const {
+    if (start > end || end > size_)
+        throw std::out_of_range("out of range");
+
+    dynamic_array<T> result(end - start);
+    for (size_t i = start; i < end; ++i)
+        result[i - start] = (*this)[i];
+
+    return result;
+}
+
+template<class T>
+dynamic_array<T> dynamic_array<T>::operator()(size_t start, size_t end) const {
+    return slice(start, end);
 }
 
 template<class T>

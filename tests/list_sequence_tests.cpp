@@ -96,3 +96,49 @@ TEST(list_sequence, clear) {
 
     EXPECT_EQ(seq.size(), 0);
 }
+
+TEST(list_sequence, slice) {
+    list_sequence<int> array = {1, 2, 3, 4};
+    auto sliced = array.slice(1, 3);
+    int expected[] = {2, 3};
+
+    EXPECT_EQ(sliced.size(), 2);
+
+    for (size_t i = 0; i < 2; ++i)
+        EXPECT_EQ(sliced[i], expected[i]);
+}
+
+TEST(list_sequence, slice_full) {
+    list_sequence<int> array = {1, 2, 3};
+    auto sliced = array.slice(0, 3);
+    int expected[] = {1, 2, 3};
+
+    EXPECT_EQ(sliced.size(), 3);
+
+    for (size_t i = 0; i < 3; ++i)
+        EXPECT_EQ(sliced[i], expected[i]);
+}
+
+TEST(list_sequence, slice_empty) {
+    list_sequence<int> array = {1, 2, 3};
+    auto sliced = array.slice(1, 1);
+
+    EXPECT_EQ(sliced.size(), 0);
+}
+
+TEST(list_sequence, slice_out_of_range) {
+    list_sequence<int> array = {1, 2, 3};
+
+    EXPECT_THROW(array.slice(1, 4), std::out_of_range);
+}
+
+TEST(list_sequence, operator_slice) {
+    list_sequence<int> array = {1, 2, 3, 4};
+    auto sliced = array(1, 3);
+    int expected[] = {2, 3};
+
+    EXPECT_EQ(sliced.size(), 2);
+
+    for (size_t i = 0; i < 2; ++i)
+        EXPECT_EQ(sliced[i], expected[i]);
+}
