@@ -238,3 +238,48 @@ TEST(array_sequence, reduce_empty) {
 
     EXPECT_EQ(result, 42);
 }
+
+TEST(array_sequence, zip) {
+    array_sequence<int> nums = {1, 2, 3};
+    array_sequence<char> chars = {'a', 'b', 'c'};
+    auto zipped = nums.zip(chars);
+    std::pair<int, char> expected[] = {
+        {1, 'a'},
+        {2, 'b'},
+        {3, 'c'}
+    };
+
+    EXPECT_EQ(zipped.size(), 3);
+    
+    for (auto i = 0; i < 3; ++i) {
+        EXPECT_EQ(zipped[i].first, expected[i].first);
+        EXPECT_EQ(zipped[i].second, expected[i].second);
+        ++i;
+    }
+}
+
+TEST(array_sequence, zip_size_mismatch) {
+    array_sequence<int> a = {1, 2};
+    array_sequence<char> b = {'a'};
+
+    EXPECT_THROW(a.zip(b), std::invalid_argument);
+}
+
+TEST(array_sequence, unzip) {
+    array_sequence<std::pair<int, char>> seq = {
+        {1, 'a'},
+        {2, 'b'},
+        {3, 'c'}
+    };
+    auto [nums, chars] = unzip(seq);
+    int expected_nums[] = {1, 2, 3};
+    char expected_chars[] = {'a', 'b', 'c'};
+
+    EXPECT_EQ(nums.size(), 3);
+    EXPECT_EQ(chars.size(), 3);
+
+    for (auto i = 0; i < 3; ++i) {
+        EXPECT_EQ(nums[i], expected_nums[i]);
+        EXPECT_EQ(chars[i], expected_chars[i]);
+    }
+}

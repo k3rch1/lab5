@@ -72,6 +72,9 @@ public:
 
     template<std::invocable<T, T> F>
     T reduce(F func, T init) const;
+
+    template<class U>
+    array_sequence<std::pair<T, U>> zip(const array_sequence<U>& other) const;
 };
 
 template<class T>
@@ -247,4 +250,30 @@ T array_sequence<T>::reduce(F func, T init) const {
         result = func(result, el);
 
     return result;
+}
+
+template<class T>
+template<class U>
+array_sequence<std::pair<T, U>> array_sequence<T>::zip(const array_sequence<U>& other) const {
+    if (size() != other.size())
+        throw std::invalid_argument("size mismatch");
+    array_sequence<std::pair<T, U>> result;
+
+    for (size_t i = 0; i < size(); ++i)
+        result.append({(*this)[i], other[i]});
+
+    return result;
+}
+
+template<class T, class U>
+std::pair<array_sequence<T>, array_sequence<U>> unzip(const array_sequence<std::pair<T, U>>& seq) {
+    array_sequence<T> first;
+    array_sequence<U> second;
+
+    for (auto el : seq) {
+        first.append(el.first);
+        second.append(el.second);
+    }
+
+    return {first, second};
 }
