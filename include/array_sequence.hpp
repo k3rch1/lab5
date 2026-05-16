@@ -66,6 +66,12 @@ public:
 
     template<std::invocable<T> F>
     auto map(F func) const;
+
+    template<std::predicate<T> P>
+    array_sequence<T> filter(P pred) const;
+
+    template<std::invocable<T, T> F>
+    T reduce(F func, T init) const;
 };
 
 template<class T>
@@ -216,6 +222,29 @@ auto array_sequence<T>::map(F func) const {
 
     for (auto el : *this)
         result.append(func(el));
+
+    return result;
+}
+
+template<class T>
+template<std::predicate<T> P>
+array_sequence<T> array_sequence<T>::filter(P pred) const {
+    array_sequence<T> result;
+
+    for (auto el : *this)
+        if (pred(el))
+            result.append(el);
+
+    return result;
+}
+
+template<class T>
+template<std::invocable<T, T> F>
+T array_sequence<T>::reduce(F func, T init) const {
+    T result = init;
+
+    for (auto el : *this)
+        result = func(result, el);
 
     return result;
 }

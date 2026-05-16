@@ -177,3 +177,64 @@ TEST(array_sequence, map_empty) {
 
     EXPECT_TRUE(mapped.empty());
 }
+
+TEST(array_sequence, filter) {
+    array_sequence<int> seq = {1, 2, 3, 4, 5};
+    auto filtered = seq.filter([](int x) {
+        return x % 2 == 0;
+    });
+    int expected[] = {2, 4};
+
+    EXPECT_EQ(filtered.size(), 2);
+
+    for (size_t i = 0; i < 2; ++i)
+        EXPECT_EQ(filtered[i], expected[i]);
+}
+
+TEST(array_sequence, filter_empty) {
+    array_sequence<int> seq = {1, 3, 5};
+    auto filtered = seq.filter([](int x) {
+        return x % 2 == 0;
+    });
+
+    EXPECT_TRUE(filtered.empty());
+}
+
+TEST(array_sequence, filter_all) {
+    array_sequence<int> seq = {2, 4, 6};
+    auto filtered = seq.filter([](int x) {
+        return x % 2 == 0;
+    });
+
+    EXPECT_EQ(filtered.size(), 3);
+
+    for (size_t i = 0; i < 3; ++i)
+        EXPECT_EQ(filtered[i], seq[i]);
+}
+
+TEST(array_sequence, reduce_sum) {
+    array_sequence<int> seq = {1, 2, 3, 4};
+    auto result = seq.reduce([](int a, int b) {
+        return a + b;
+    }, 0);
+
+    EXPECT_EQ(result, 10);
+}
+
+TEST(array_sequence, reduce_mul) {
+    array_sequence<int> seq = {1, 2, 3, 4};
+    auto result = seq.reduce([](int a, int b) {
+        return a * b;
+    }, 1);
+
+    EXPECT_EQ(result, 24);
+}
+
+TEST(array_sequence, reduce_empty) {
+    array_sequence<int> seq;
+    auto result = seq.reduce([](int a, int b) {
+        return a + b;
+    }, 42);
+
+    EXPECT_EQ(result, 42);
+}
