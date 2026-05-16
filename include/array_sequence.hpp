@@ -63,6 +63,9 @@ public:
 
     auto end() const noexcept;
     auto end() noexcept;
+
+    template<std::invocable<T> F>
+    auto map(F func) const;
 };
 
 template<class T>
@@ -203,4 +206,16 @@ auto array_sequence<T>::end() noexcept {
 template<class T>
 auto array_sequence<T>::end() const noexcept {
     return items.end();
+}
+
+template<class T>
+template<std::invocable<T> F>
+auto array_sequence<T>::map(F func) const {
+    using U = decltype(func(std::declval<T>()));
+    array_sequence<U> result;
+
+    for (auto el : *this)
+        result.append(func(el));
+
+    return result;
 }

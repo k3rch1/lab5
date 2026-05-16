@@ -142,3 +142,38 @@ TEST(array_sequence, operator_slice) {
     for (size_t i = 0; i < 2; ++i)
         EXPECT_EQ(sliced[i], expected[i]);
 }
+
+TEST(array_sequence, map) {
+    array_sequence<int> seq = {1, 2, 3};
+    auto mapped = seq.map([](int x) {
+        return x * 2;
+    });
+    int expected[] = {2, 4, 6};
+
+    EXPECT_EQ(mapped.size(), 3);
+
+    for (size_t i = 0; i < 3; ++i)
+        EXPECT_EQ(mapped[i], expected[i]);
+}
+
+TEST(array_sequence, map_type_change) {
+    array_sequence<int> seq = {1, 2, 3};
+    auto mapped = seq.map([](int x) {
+        return x + 0.5;
+    });
+    double expected[] = {1.5, 2.5, 3.5};
+
+    EXPECT_EQ(mapped.size(), 3);
+
+    for (size_t i = 0; i < 3; ++i)
+        EXPECT_DOUBLE_EQ(mapped[i], expected[i]);
+}
+
+TEST(array_sequence, map_empty) {
+    array_sequence<int> seq;
+    auto mapped = seq.map([](int x) {
+        return x * 2;
+    });
+
+    EXPECT_TRUE(mapped.empty());
+}

@@ -63,6 +63,9 @@ public:
 
     auto end() const noexcept;
     auto end() noexcept;
+
+    template<std::invocable<T> F>
+    auto map(F func) const;
 };
 
 template<class T>
@@ -177,12 +180,12 @@ void list_sequence<T>::clear() {
 
 template<class T>
 list_sequence<T> list_sequence<T>::slice(size_t start, size_t end) const {
-    return array_sequence<T>(items.slice(start, end));
+    return list_sequence<T>(items.slice(start, end));
 }
 
 template<class T>
 list_sequence<T> list_sequence<T>::operator()(size_t start, size_t end) const {
-    return array_sequence<T>(items(start, end));
+    return list_sequence<T>(items(start, end));
 }
 
 template<class T>
@@ -203,4 +206,16 @@ auto list_sequence<T>::end() noexcept {
 template<class T>
 auto list_sequence<T>::end() const noexcept {
     return items.end();
+}
+
+template<class T>
+template<std::invocable<T> F>
+auto list_sequence<T>::map(F func) const {
+    using U = decltype(func(std::declval<T>()));
+    list_sequence<U> result;
+
+    for (auto el : *this)
+        result.append(func(el));
+
+    return result;
 }
