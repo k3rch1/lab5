@@ -283,3 +283,14 @@ TEST(array_sequence, unzip) {
         EXPECT_EQ(chars[i], expected_chars[i]);
     }
 }
+
+TEST(array_sequence, remove) {
+    array_sequence<int> seq = {1, 2, 3, 4};
+    seq.remove(1);
+    int expected[] = {1, 3, 4};
+
+    EXPECT_EQ(seq.size(), 3);
+
+    for (auto i = 0; i < 3; ++i)
+        EXPECT_EQ(seq[i], expected[i]);
+}

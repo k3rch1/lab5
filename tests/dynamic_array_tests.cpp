@@ -240,3 +240,14 @@ TEST(dynamic_array, operator_slice) {
     for (size_t i = 0; i < 2; ++i)
         EXPECT_EQ(sliced[i], expected[i]);
 }
+
+TEST(dynamic_array, remove) {
+    dynamic_array<int> arr = {1, 2, 3, 4};
+    arr.remove(1);
+    int expected[] = {1, 3, 4};
+
+    EXPECT_EQ(arr.size(), 3);
+
+    for (auto i = 0; i < 3; ++i)
+        EXPECT_EQ(arr[i], expected[i]);
+}

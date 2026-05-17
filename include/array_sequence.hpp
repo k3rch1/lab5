@@ -53,6 +53,8 @@ public:
     void insert(size_t index, const T& value) override;
     void insert(size_t index, T&& value) override;
 
+    void remove(size_t index) override;
+
     void clear() override;
 
     array_sequence<T> slice(size_t start, size_t end) const;
@@ -180,6 +182,11 @@ void array_sequence<T>::insert(size_t index, const T& value) {
 template<class T>
 void array_sequence<T>::insert(size_t index, T&& value) {
     items.insert(index, std::move(value));
+}
+
+template<class T>
+void array_sequence<T>::remove(size_t index) {
+    items.remove(index);
 }
 
 template<class T>

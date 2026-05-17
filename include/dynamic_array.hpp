@@ -48,6 +48,8 @@ public:
     void insert(size_t index, const T& value);
     void insert(size_t index, T&& value);
 
+    void remove(size_t index);
+
     void resize(size_t new_size);
 
     dynamic_array<T> slice(size_t start, size_t end) const;
@@ -232,6 +234,17 @@ void dynamic_array<T>::insert(size_t index, T&& value) {
     }
 
     items[index] = std::move(value);
+}
+
+template<class T>
+void dynamic_array<T>::remove(size_t index) {
+    if (index >= size_)
+        throw std::out_of_range("out of range");
+
+    for (auto i = index; i + 1 < size_; ++i)
+        items[i] = std::move(items[i + 1]);
+
+    resize(size_ - 1);
 }
 
 template<class T>

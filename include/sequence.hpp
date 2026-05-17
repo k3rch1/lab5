@@ -32,5 +32,7 @@ public:
     virtual void insert(size_t index, const T& value) = 0;
     virtual void insert(size_t index, T&& value) = 0;
 
+    virtual void remove(size_t index) = 0;
+
     virtual void clear() = 0;
 };
