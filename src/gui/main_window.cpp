@@ -20,21 +20,38 @@ MainWindow::MainWindow() {
     left_panel->addWidget(create_button);
     left_panel->addWidget(sequence_list);
 
-    auto* workspace = new QWidget;
+    workspace = new QWidget;
+    workspace->hide();
 
     auto* right_layout = new QVBoxLayout;
     auto* buttons_layout = new QHBoxLayout;
 
     input = new QLineEdit;
 
+    sequence_controls = new QWidget;
+    element_controls = new QWidget;
+    sequence_controls->hide();
+    element_controls->hide();
+    auto* sequence_layout = new QHBoxLayout;
+    auto* element_controls_layout = new QHBoxLayout;
+
     auto* append_button = new QPushButton("append");
     auto* prepend_button = new QPushButton("prepend");
     auto* remove_button = new QPushButton("remove");
+    auto* delete_button = new QPushButton("delete seq");
+    auto* edit_button = new QPushButton("edit");
 
     buttons_layout->addWidget(input);
-    buttons_layout->addWidget(append_button);
-    buttons_layout->addWidget(prepend_button);
-    buttons_layout->addWidget(remove_button);
+    buttons_layout->addWidget(sequence_controls);
+    buttons_layout->addWidget(element_controls);
+    sequence_layout->addWidget(append_button);
+    sequence_layout->addWidget(prepend_button);
+    sequence_layout->addWidget(delete_button);
+    element_controls_layout->addWidget(remove_button);
+    element_controls_layout->addWidget(edit_button);
+
+    sequence_controls->setLayout(sequence_layout);
+    element_controls->setLayout(element_controls_layout);
 
     elements_layout = new QHBoxLayout;
     elements_layout->setSpacing(10);
@@ -55,6 +72,8 @@ MainWindow::MainWindow() {
     });
     connect(sequence_list, &QListWidget::currentRowChanged, [this]() {
         selected_element = -1;
+        element_controls->hide();
+        sequence_controls->show();
         redraw_workspace();
     });
 
@@ -89,6 +108,30 @@ MainWindow::MainWindow() {
         if (seq_index < 0 || selected_element < 0) return;
 
         sequences[seq_index]->remove(selected_element);
+        if (selected_element > -1) selected_element--;
+        redraw_workspace();
+    });
+
+    connect(delete_button, &QPushButton::clicked, [this]() {
+        auto index = sequence_list->currentRow();
+        if (index < 0) return;
+        delete sequences[index];
+        sequences.remove(index);
+        selected_element = -1;
+
+        redraw_sequences();
+        redraw_workspace();
+    });
+
+    connect(edit_button, &QPushButton::clicked, [this]() {
+        auto seq_index = sequence_list->currentRow();
+        if (seq_index < 0 || selected_element < 0) return;
+        bool ok;
+        int value = input->text().toInt(&ok);
+        if (!ok) return;
+
+        sequences[seq_index]->set(selected_element, value);
+
         redraw_workspace();
     });
 
@@ -125,8 +168,11 @@ void MainWindow::redraw_workspace() {
     }
 
     auto index = sequence_list->currentRow();
-    if (index < 0) return;
-
+    if (index < 0) {
+        workspace->hide();
+        return;
+    }
+    workspace->show();
     auto* seq = sequences[index];
 
     for (auto i = 0; i < seq->size(); ++i) {
@@ -135,8 +181,16 @@ void MainWindow::redraw_workspace() {
         if (i == selected_element) button->setStyleSheet("background-color: #17B317;");
 
         connect(button, &QPushButton::clicked, [this, i]() {
-            if (selected_element == i) selected_element = -1;
-            else selected_element = i;
+            if (selected_element == i) {
+                selected_element = -1;
+                sequence_controls->show();
+                element_controls->hide();
+            }
+            else {
+                selected_element = i;
+                sequence_controls->hide();
+                element_controls->show();
+            }
             redraw_workspace();
         });
 

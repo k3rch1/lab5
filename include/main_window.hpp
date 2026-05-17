@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QLineEdit>
+#include <QWidget>
 
 #include "array_sequence.hpp"
 #include "list_sequence.hpp"
@@ -25,6 +26,9 @@ private:
 
     QWidget* workspace;
     QHBoxLayout* elements_layout;
+
+    QWidget* sequence_controls;
+    QWidget* element_controls;
 
     QLineEdit* input;
     int selected_element = -1;
