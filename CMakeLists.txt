@@ -15,7 +15,11 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
 add_subdirectory(tests)
 
-add_executable(gui src/main.cpp)
+add_executable(gui 
+    src/main.cpp
+    src/gui/main_window.cpp
+    include/main_window.hpp
+)
 
 target_include_directories(gui PRIVATE include)
 
