@@ -20,7 +20,7 @@ public:
     ~MainWindow();
 
 private:
-    array_sequence<sequence<int>*> sequences;
+    array_sequence<sequence<double>*> sequences;
 
     QListWidget* sequence_list;
 

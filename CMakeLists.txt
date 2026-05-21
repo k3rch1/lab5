@@ -13,6 +13,10 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
+add_library(lab5 INTERFACE)
+
+target_include_directories(lab5 INTERFACE include)
+
 add_subdirectory(tests)
 
 add_executable(gui 

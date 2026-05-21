@@ -82,7 +82,7 @@ MainWindow::MainWindow() {
         if (index < 0) return;
 
         bool ok;
-        int value = input->text().toInt(&ok);
+        double value = input->text().toDouble(&ok);
         if (!ok) return;
 
         sequences[index]->append(value);
@@ -94,7 +94,7 @@ MainWindow::MainWindow() {
         if (index < 0) return;
 
         bool ok;
-        int value = input->text().toInt(&ok);
+        double value = input->text().toDouble(&ok);
 
         if (!ok) return;
 
@@ -127,7 +127,7 @@ MainWindow::MainWindow() {
         auto seq_index = sequence_list->currentRow();
         if (seq_index < 0 || selected_element < 0) return;
         bool ok;
-        int value = input->text().toInt(&ok);
+        double value = input->text().toDouble(&ok);
         if (!ok) return;
 
         sequences[seq_index]->set(selected_element, value);
@@ -143,19 +143,19 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::create_array_sequence() {
-    sequences.append(new array_sequence<int>);
+    sequences.append(new array_sequence<double>);
     redraw_sequences();
 }
 
 void MainWindow::create_list_sequence() {
-    sequences.append(new list_sequence<int>);
+    sequences.append(new list_sequence<double>);
     redraw_sequences();
 }
 
 void MainWindow::redraw_sequences() {
     sequence_list->clear();
     for (auto i = 0; i < sequences.size(); ++i) {
-        QString name = dynamic_cast<array_sequence<int>*>(sequences[i]) ? QString("arr seq %1").arg(i) : QString("list seq %1").arg(i);
+        QString name = dynamic_cast<array_sequence<double>*>(sequences[i]) ? QString("arr seq %1").arg(i) : QString("list seq %1").arg(i);
         sequence_list->addItem(name);
     }
 }
