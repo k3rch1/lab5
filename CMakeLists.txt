@@ -5,26 +5,28 @@ project(lab5)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_PREFIX_PATH "C:/qt/6.11.0/mingw_64")
-
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
-
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
-
 add_library(lab5 INTERFACE)
 
 target_include_directories(lab5 INTERFACE include)
 
-add_subdirectory(tests)
+if (PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    set(CMAKE_PREFIX_PATH "C:/qt/6.11.0/mingw_64")
 
-add_executable(gui 
-    src/main.cpp
-    src/gui/main_window.cpp
-    include/main_window.hpp
-)
+    set(CMAKE_AUTOMOC ON)
+    set(CMAKE_AUTOUIC ON)
+    set(CMAKE_AUTORCC ON)
+    
+    find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
-target_include_directories(gui PRIVATE include)
+    add_subdirectory(tests)
 
-target_link_libraries(gui PRIVATE Qt6::Widgets)
+    add_executable(gui 
+        src/main.cpp
+        src/gui/main_window.cpp
+        include/main_window.hpp
+    )
+
+    target_include_directories(gui PRIVATE include)
+
+    target_link_libraries(gui PRIVATE Qt6::Widgets)
+endif()
