@@ -4,6 +4,7 @@
 #include <initializer_list>
 #include <stdexcept>
 #include <utility>
+#include <type_traits>
 
 template<class T>
 class dynamic_array {
@@ -163,77 +164,87 @@ const T& dynamic_array<T>::get(size_t index) const {
 template<class T>
 void dynamic_array<T>::set(size_t index, const T& value) {
     if (index >= size_) throw std::out_of_range("out of range");
-    items[index] = value;
+    if constexpr (std::is_copy_assignable_v<T>) items[index] = value;
+    else throw std::logic_error("type is not copy-assignable");
 }
 
 template<class T>
 void dynamic_array<T>::set(size_t index, T&& value) {
     if (index >= size_) throw std::out_of_range("out of range");
-    items[index] = std::move(value);
+    if constexpr (std::is_move_assignable_v<T>) items[index] = std::move(value);
+    else throw std::logic_error("type is not move-assignable");
 }
 
 template<class T>
 void dynamic_array<T>::push_front(const T& value) {
-    resize(size_ + 1);
+    if constexpr (std::is_copy_assignable_v<T>) {
+        resize(size_ + 1);
 
-    for (size_t i = size_ - 1; i > 0; --i) {
-        items[i] = std::move(items[i - 1]);
-    }
+        for (size_t i = size_ - 1; i > 0; --i) {
+            items[i] = std::move(items[i - 1]);
+        }
 
-    items[0] = value;
+        items[0] = value;
+    } else throw std::logic_error("type is not copy-assignable");
 }
 
 template<class T>
 void dynamic_array<T>::push_front(T&& value) {
-    resize(size_ + 1);
+    if constexpr (std::is_move_assignable_v<T>) {
+        resize(size_ + 1);
 
-    for (size_t i = size_ - 1; i > 0; --i) {
-        items[i] = std::move(items[i - 1]);
-    }
+        for (size_t i = size_ - 1; i > 0; --i) {
+            items[i] = std::move(items[i - 1]);
+        }
 
-    items[0] = std::move(value);
+        items[0] = std::move(value);
+    } else throw std::logic_error("type is not move-assignable");
 }
 
 template<class T>
 void dynamic_array<T>::push_back(const T& value) {
-    resize(size_ + 1);
-    items[size_ - 1] = value;
+    if constexpr (std::is_copy_assignable_v<T>) {
+        resize(size_ + 1);
+        items[size_ - 1] = value;
+    } else throw std::logic_error("type is not copy-assignable");
 }
 
 template<class T>
 void dynamic_array<T>::push_back(T&& value) {
-    resize(size_ + 1);
-    items[size_ - 1] = std::move(value);
+    if constexpr (std::is_move_assignable_v<T>) {
+        resize(size_ + 1);
+        items[size_ - 1] = std::move(value);
+    } else throw std::logic_error("type is not move-assignable");
 }
 
 template<class T>
 void dynamic_array<T>::insert(size_t index, const T& value) {
-    if (index > size_) {
-        throw std::out_of_range("out of range");
-    }
+    if (index > size_) throw std::out_of_range("out of range");
 
-    resize(size_ + 1);
+    if constexpr (std::is_copy_assignable_v<T>) {
+        resize(size_ + 1);
 
-    for (size_t i = size_ - 1; i > index; --i) {
-        items[i] = std::move(items[i - 1]);
-    }
+        for (size_t i = size_ - 1; i > index; --i) {
+            items[i] = std::move(items[i - 1]);
+        }
 
-    items[index] = value;
+        items[index] = value;
+    } else throw std::logic_error("type is not copy-assignable");
 }
 
 template<class T>
 void dynamic_array<T>::insert(size_t index, T&& value) {
-    if (index > size_) {
-        throw std::out_of_range("out of range");
-    }
+    if (index > size_) throw std::out_of_range("out of range");
 
-    resize(size_ + 1);
+    if constexpr (std::is_move_assignable_v<T>) {
+        resize(size_ + 1);
 
-    for (size_t i = size_ - 1; i > index; --i) {
-        items[i] = std::move(items[i - 1]);
-    }
+        for (size_t i = size_ - 1; i > index; --i) {
+            items[i] = std::move(items[i - 1]);
+        }
 
-    items[index] = std::move(value);
+        items[index] = std::move(value);
+    } else throw std::logic_error("type is not move-assignable");
 }
 
 template<class T>
@@ -252,7 +263,8 @@ void dynamic_array<T>::resize(size_t new_size) {
     if (new_size == size_) return;
 
     T* new_items = new T[new_size]();
-    std::move(items, items + std::min(size_, new_size), new_items);
+    size_t count = std::min(size_, new_size);
+    if (count > 0) std::move(items, items + count, new_items);
 
     delete[] items;
 
